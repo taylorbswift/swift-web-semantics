@@ -2,37 +2,18 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-structured-document",
+    name: "swift-resource",
     products: 
     [
-        .library    (name: "StructuredDocument",    targets: ["HTML", "SVG"]),
+        .library    (name: "Resource", targets: ["Resource"]),
     ],
     dependencies: 
     [
     ],
     targets: 
     [
-        .target(name: "StructuredDocument", 
-            path: "sources/document", 
-            exclude: 
-            [
-            ]),
-        .target(name: "HTML",
-            dependencies: 
-            [
-                .target(name: "StructuredDocument")
-            ],
-            path: "sources/html",
-            exclude: 
-            [
-            ]),
-        .target(name: "SVG",
-            dependencies: 
-            [
-                .target(name: "StructuredDocument"),
-                .target(name: "HTML")
-            ],
-            path: "sources/svg",
+        .target(name: "Resource", 
+            path: "sources/resource", 
             exclude: 
             [
             ]),
