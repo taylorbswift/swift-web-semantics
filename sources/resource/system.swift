@@ -26,14 +26,14 @@ extension Resource
     }
     
     @inlinable public static 
-    func file(_ path:FilePath, of subtype:Text) throws -> Self
+    func file(_version:Version, _ path:FilePath, of subtype:Text) throws -> Self
     {
-        .text(try Self.read(String.self, from: path), subtype: subtype)
+        .text(try Self.read(String.self, from: path), subtype: subtype, version: _version)
     }
     @inlinable public static 
-    func file(_ path:FilePath, of subtype:Binary) throws -> Self
+    func file(_version:Version, _ path:FilePath, of subtype:Binary) throws -> Self
     {
-        .binary(try Self.read([UInt8].self, from: path), subtype: subtype)
+        .binary(try Self.read([UInt8].self, from: path), subtype: subtype, version: _version)
     }
     
     @inlinable public static 
@@ -44,7 +44,7 @@ extension Resource
             (file:FileDescriptor, count:Int) in 
             try .init(unsafeUninitializedCapacity: count)
             {
-                $1 = try file.read(into: UnsafeMutableRawBufferPointer.init($0))
+                $1 = try file.read(fromAbsoluteOffset: 0, into: UnsafeMutableRawBufferPointer.init($0))
             }
         }
     }
@@ -56,7 +56,7 @@ extension Resource
             (file:FileDescriptor, count:Int) in 
             try .init(unsafeUninitializedCapacity: count)
             {
-                try file.read(into: UnsafeMutableRawBufferPointer.init($0))
+                try file.read(fromAbsoluteOffset: 0, into: UnsafeMutableRawBufferPointer.init($0))
             }
         }
     }
