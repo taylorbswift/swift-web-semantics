@@ -9,10 +9,15 @@ let package = Package(
     ],
     dependencies: 
     [
+        .package(url: "https://github.com/apple/swift-system.git", from: "1.1.1"),
     ],
     targets: 
     [
         .target(name: "Resource", 
+            dependencies: 
+            [
+                .product(name: "SystemPackage", package: "swift-system"),
+            ],
             path: "sources/resource", 
             exclude: 
             [

@@ -1,6 +1,9 @@
 @frozen public 
 enum Resource 
 {
+    case text(String,    subtype:Text = .plain)
+    case binary([UInt8], subtype:Binary) 
+    
     @frozen public 
     enum Text:String, RawRepresentable, CustomStringConvertible
     {
@@ -32,6 +35,16 @@ enum Resource
         }
     }
     
-    case text(String,    subtype:Text = .plain)
-    case binary([UInt8], subtype:Binary) 
+    @frozen public 
+    enum Immediate<Endpoint> 
+    {
+        case immediate(Resource, tag:Int64? = nil, error:Int? = nil)
+        case redirect(String)
+        case dynamic(Endpoint)
+    }
+    @frozen public 
+    enum Dynamic
+    {
+        case dynamic(Resource, error:Int? = nil)
+    }
 }
