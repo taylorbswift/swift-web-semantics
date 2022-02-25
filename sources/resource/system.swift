@@ -26,14 +26,14 @@ extension Resource
     }
     
     @inlinable public static 
-    func file(_version:Version, _ path:FilePath, of subtype:Text) throws -> Self
+    func file(_version:Version, _ path:FilePath, of type:Text) throws -> Self
     {
-        .text(try Self.read(String.self, from: path), subtype: subtype, version: _version)
+        .text(try Self.read(String.self, from: path), type: type, version: _version)
     }
     @inlinable public static 
-    func file(_version:Version, _ path:FilePath, of subtype:Binary) throws -> Self
+    func file(_version:Version, _ path:FilePath, of type:Binary) throws -> Self
     {
-        .binary(try Self.read([UInt8].self, from: path), subtype: subtype, version: _version)
+        .binary(try Self.read([UInt8].self, from: path), type: type, version: _version)
     }
     
     @inlinable public static 

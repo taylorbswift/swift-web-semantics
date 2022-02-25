@@ -2,31 +2,69 @@
 enum Resource 
 {
     @frozen public 
-    struct Version:Hashable, Comparable, CustomStringConvertible  
+    struct Version:Hashable  
     {
-        public 
-        var major:Int, 
-            minor:Int, 
-            patch:Int
-            
-        public 
-        var description:String 
+        /* @frozen public 
+        struct Semantic:Hashable, Comparable, CustomStringConvertible  
         {
-            "\(self.major).\(self.minor).\(self.patch)"
-        }
+            public 
+            var major:Int, 
+                minor:Int, 
+                patch:Int
+                
+            @inlinable public 
+            var description:String 
+            {
+                "\(self.major).\(self.minor).\(self.patch)"
+            }
+
+            @inlinable public 
+            init(_ major:Int, _ minor:Int, _ patch:Int)
+            {
+                self.major = major
+                self.minor = minor
+                self.patch = patch
+            }
+            
+            @inlinable public static 
+            func < (lhs:Self, rhs:Self) -> Bool 
+            {
+                (lhs.major, lhs.minor, lhs.patch) < (rhs.major, rhs.minor, rhs.patch)
+            }
+        }  */
+        
+        public
+        var key:String 
+        
         @inlinable public
         var etag:String 
         {
             """
-            "\(self.major).\(self.minor).\(self.patch)"
+            "\(self.key)"
             """
         }
-        @inlinable public 
-        init(_ major:Int, _ minor:Int, _ patch:Int)
+        
+        @inlinable public static
+        func semantic(_ major:Int, _ minor:Int, _ patch:Int) -> Self 
         {
-            self.major = major
-            self.minor = minor
-            self.patch = patch
+            .init("\(major).\(minor).\(patch)")
+        }
+        
+        @inlinable public static 
+        func * (lhs:Self, rhs:Self) -> Self 
+        {
+            .init("\(lhs):\(rhs)")
+        }
+        @inlinable public static 
+        func *= (lhs:inout Self, rhs:Self)
+        {
+            lhs.key += ":\(rhs)"
+        }
+        
+        @inlinable public 
+        init(_ key:String)
+        {
+            self.key = key
         }
         @inlinable public 
         init?(etag:String)
@@ -36,29 +74,13 @@ enum Resource
             {
                 return nil 
             }
-            let components:[Substring] = etag.dropFirst().dropLast().split(separator: ".")
-            guard                components.count == 3, 
-                    let patch:Int = .init(components[2]),
-                    let minor:Int = .init(components[1]),
-                    let major:Int = .init(components[0])
-            else 
-            {
-                return nil 
-            }
-            self.patch = patch 
-            self.minor = minor 
-            self.major = major
-        }
-        
-        @inlinable public static 
-        func < (lhs:Self, rhs:Self) -> Bool 
-        {
-            (lhs.major, lhs.minor, lhs.patch) < (rhs.major, rhs.minor, rhs.patch)
+            self.key = .init(etag.dropFirst().dropLast())
         }
     }
     
-    case text(String,    subtype:Text = .plain, version:Version? = nil)
-    case binary([UInt8], subtype:Binary,        version:Version? = nil) 
+    case text(String,    type:Text = .plain, version:Version? = nil)
+    case bytes([UInt8],  type:Text,          version:Version? = nil)
+    case binary([UInt8], type:Binary,        version:Version? = nil) 
     
     @frozen public 
     enum Text:String, RawRepresentable, CustomStringConvertible
