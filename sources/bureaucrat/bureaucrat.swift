@@ -12,7 +12,7 @@ struct Bureaucrat:Sendable
         let error:Error 
         
         @usableFromInline 
-        init(path:FilePath, error:Error )
+        init(path:FilePath, error:Error)
         {
             self.path   = path 
             self.error  = error
@@ -26,18 +26,20 @@ struct Bureaucrat:Sendable
     }
     
     private 
-    let git:FilePath 
+    let git:FilePath, 
+        repository:FilePath
     
     public
-    init(git:FilePath = "/usr/bin/git")
+    init(git:FilePath = "/usr/bin/git", repository:FilePath)
     {
-        self.git = git
+        self.git        = git
+        self.repository = repository
     }
 
     private 
     func modified(_ path:FilePath) async throws -> Bool
     {
-        var output:String = try await Self.run(self.git, ["status", "-s", path.string])
+        var output:String = try await Self.run(self.git, ["-C", self.repository.string, "status", "-s", path.string])
         while let last:Character = output.last
         {
             guard last.isWhitespace 
@@ -52,7 +54,7 @@ struct Bureaucrat:Sendable
     private 
     func lastCommit(_ path:FilePath) async throws -> String
     {
-        var output:String = try await Self.run(self.git, ["log", "-n", "1", "--format=%H", path.string])
+        var output:String = try await Self.run(self.git, ["-C", self.repository.string, "log", "-n", "1", "--format=%H", path.string])
         while case true? = output.last?.isWhitespace 
         {
             output.removeLast()
@@ -74,15 +76,25 @@ struct Bureaucrat:Sendable
     public
     func read(from path:FilePath, type:Resource.Text) async throws -> Resource
     {
+        guard path.isRelative 
+        else 
+        {
+            fatalError("path is not relative")
+        }
         async let version:Resource.Version? = self.version(of: path)
-        let bytes:[UInt8]                   = try Self.read([UInt8].self, from: path)
+        let bytes:[UInt8]                   = try Self.read([UInt8].self, from: self.repository.appending(path.components))
         return .bytes(bytes, type: type, version: try await version)
     }
     public
     func read(from path:FilePath, type:Resource.Binary) async throws -> Resource
     {
+        guard path.isRelative 
+        else 
+        {
+            fatalError("path is not relative")
+        }
         async let version:Resource.Version? = self.version(of: path)
-        let bytes:[UInt8]                   = try Self.read([UInt8].self, from: path)
+        let bytes:[UInt8]                   = try Self.read([UInt8].self, from: self.repository.appending(path.components))
         return .binary(bytes, type: type, version: try await version)
     }
     
