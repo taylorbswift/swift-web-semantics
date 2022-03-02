@@ -164,7 +164,9 @@ struct Bureaucrat:Sendable
     {
         do 
         {
-            let file:FileDescriptor = try .open(path, .writeOnly, options: [.create, .truncate])
+            let file:FileDescriptor = try .open(path, .writeOnly, 
+                options:        [.create, .truncate], 
+                permissions:    [.ownerReadWrite, .groupRead, .otherRead])
             let count:Int           = try file.closeAfter 
             {
                 try file.write(UnsafeRawBufferPointer.init(buffer))
