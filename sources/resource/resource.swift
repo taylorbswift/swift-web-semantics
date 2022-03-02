@@ -1,8 +1,8 @@
 @frozen public 
-enum Resource 
+enum Resource:Sendable 
 {
     @frozen public 
-    struct Version:Hashable  
+    struct Version:Hashable, Sendable  
     {
         /* @frozen public 
         struct Semantic:Hashable, Comparable, CustomStringConvertible  
@@ -83,7 +83,7 @@ enum Resource
     case binary([UInt8], type:Binary,        version:Version? = nil) 
     
     @frozen public 
-    enum Text:String, RawRepresentable, CustomStringConvertible
+    enum Text:String, RawRepresentable, CustomStringConvertible, Sendable
     {
         case plain          = "text/plain"
         case html           = "text/html"
@@ -100,7 +100,7 @@ enum Resource
         }
     }
     @frozen public 
-    enum Binary:String, RawRepresentable, CustomStringConvertible
+    enum Binary:String, RawRepresentable, CustomStringConvertible, Sendable
     {
         case otf    = "font/otf"
         case png    = "image/png"
@@ -114,14 +114,15 @@ enum Resource
     }
     
     @frozen public 
-    enum Immediate<Endpoint> 
+    enum Immediate<Endpoint>:Sendable where Endpoint:Sendable
     {
-        case immediate(Resource, error:Int? = nil)
-        case redirect(String)
+        case error(code:Int, Resource)
+        case immediate(canonical:String, Resource)
+        case redirect(canonical:String)
         case dynamic(Endpoint)
     }
     @frozen public 
-    enum Dynamic
+    enum Dynamic:Sendable
     {
         case dynamic(Resource, error:Int? = nil)
     }
