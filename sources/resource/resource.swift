@@ -2,7 +2,7 @@
 enum Resource:Sendable 
 {
     @frozen public 
-    struct Version:Hashable, Sendable  
+    struct Version:Hashable, CustomStringConvertible, Sendable  
     {
         /* @frozen public 
         struct Semantic:Hashable, Comparable, CustomStringConvertible  
@@ -34,13 +34,13 @@ enum Resource:Sendable
         }  */
         
         public
-        var key:String 
+        var description:String 
         
         @inlinable public
         var etag:String 
         {
             """
-            "\(self.key)"
+            "\(self.description)"
             """
         }
         
@@ -58,13 +58,13 @@ enum Resource:Sendable
         @inlinable public static 
         func *= (lhs:inout Self, rhs:Self)
         {
-            lhs.key += ":\(rhs)"
+            lhs.description += ":\(rhs)"
         }
         
         @inlinable public 
-        init(_ key:String)
+        init(_ description:String)
         {
-            self.key = key
+            self.description = description
         }
         @inlinable public 
         init?(etag:String)
@@ -74,7 +74,7 @@ enum Resource:Sendable
             {
                 return nil 
             }
-            self.key = .init(etag.dropFirst().dropLast())
+            self.description = .init(etag.dropFirst().dropLast())
         }
     }
     
@@ -102,7 +102,9 @@ enum Resource:Sendable
     @frozen public 
     enum Binary:String, RawRepresentable, CustomStringConvertible, Sendable
     {
+        case woff2  = "font/woff2"
         case otf    = "font/otf"
+        case ttf    = "font/ttf"
         case png    = "image/png"
         case icon   = "image/x-icon"
         
