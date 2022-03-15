@@ -98,6 +98,30 @@ enum Resource:Sendable
     case bytes([UInt8],  type:Text,          version:Version? = nil)
     case binary([UInt8], type:Binary,        version:Version? = nil) 
     
+    @inlinable public
+    var version:Version?
+    {
+        switch self
+        {
+        case    .text   (_, type: _, version: let version),
+                .bytes  (_, type: _, version: let version),
+                .binary (_, type: _, version: let version):
+            return version
+        }
+    }
+    @inlinable public
+    func matches(version other:Version?) -> Bool 
+    {
+        if let other:Version = other, case other? = self.version
+        {
+            return true 
+        }
+        else 
+        {
+            return false 
+        }
+    }
+    
     @frozen public 
     enum Text:String, RawRepresentable, CustomStringConvertible, Sendable
     {
