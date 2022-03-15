@@ -1,4 +1,20 @@
 @frozen public 
+enum StaticResponse:Sendable 
+{
+    case none(Resource)
+    
+    case maybe(canonical:String, at:String)
+    case found(canonical:String, at:String)
+    case matched(canonical:String, Resource)
+}
+@frozen public 
+enum DynamicResponse<Endpoint>:Sendable where Endpoint:Sendable
+{
+    case immediate(StaticResponse)
+    case enqueue(to:Endpoint)
+}
+
+@frozen public 
 enum Resource:Sendable 
 {
     @frozen public 
@@ -113,19 +129,5 @@ enum Resource:Sendable
         {
             self.rawValue
         }
-    }
-    
-    @frozen public 
-    enum Immediate<Endpoint>:Sendable where Endpoint:Sendable
-    {
-        case error(code:Int, Resource)
-        case immediate(canonical:String, Resource)
-        case redirect(canonical:String)
-        case dynamic(Endpoint)
-    }
-    @frozen public 
-    enum Dynamic:Sendable
-    {
-        case dynamic(Resource, error:Int? = nil)
     }
 }

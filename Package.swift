@@ -5,8 +5,8 @@ let package = Package(
     name: "swift-resource",
     products: 
     [
-        .library    (name: "Resource",      targets: ["Resource"]),
-        .library    (name: "Bureaucrat",    targets: ["Bureaucrat"]),
+        .library(name: "Resource",   targets: ["Resource"]),
+        .library(name: "Bureaucrat", targets: ["Bureaucrat"]),
     ],
     dependencies: 
     [
