@@ -126,6 +126,7 @@ enum Resource:Sendable
     enum Text:String, RawRepresentable, CustomStringConvertible, Sendable
     {
         case plain          = "text/plain"
+        case markdown       = "text/markdown"
         case html           = "text/html"
         case css            = "text/css"
         case javascript     = "text/javascript"
