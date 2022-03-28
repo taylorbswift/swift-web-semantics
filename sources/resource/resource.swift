@@ -1,3 +1,13 @@
+public 
+protocol ServiceBackend 
+{
+    associatedtype Endpoint
+    associatedtype Continuation where Continuation:Sendable
+    
+    func request(uri:String) -> DynamicResponse<Endpoint>
+    func request(_ endpoint:Endpoint, continuation:Continuation) 
+}
+
 @frozen public 
 enum StaticResponse:Sendable 
 {
