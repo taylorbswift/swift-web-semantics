@@ -1,10 +1,11 @@
 public 
 protocol ServiceBackend 
 {
+    associatedtype Request
     associatedtype Endpoint
     associatedtype Continuation where Continuation:Sendable
     
-    func request(uri:String) -> DynamicResponse<Endpoint>
+    func request(_ request:Request) -> DynamicResponse<Endpoint>
     func request(_ endpoint:Endpoint, continuation:Continuation) 
 }
 
