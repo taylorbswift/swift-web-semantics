@@ -25,6 +25,44 @@ enum DynamicResponse<Endpoint>:Sendable where Endpoint:Sendable
     case enqueue(to:Endpoint)
 }
 
+extension Resource.Version 
+{
+    @inlinable public static 
+    func * (lhs:Self, rhs:Self) -> Self 
+    {
+        .init("\(lhs):\(rhs)")
+    }
+    @inlinable public static 
+    func *= (lhs:inout Self, rhs:Self)
+    {
+        lhs.description.append(contentsOf: ":\(rhs)")
+    }
+    
+    @inlinable public static 
+    func * (lhs:Self?, rhs:Self) -> Self? 
+    {
+        lhs.map { $0 * rhs }
+    }
+    @inlinable public static 
+    func *= (lhs:inout Self?, rhs:Self)
+    {
+        lhs?.description.append(contentsOf: ":\(rhs)")
+    }
+}
+extension Optional where Wrapped == Resource.Version
+{
+    @inlinable public static 
+    func * (lhs:Self, rhs:Self) -> Self 
+    {
+        rhs.flatMap { (rhs:Wrapped) in lhs.map { $0 * rhs } }
+    }
+    @inlinable public static 
+    func *= (lhs:inout Self, rhs:Self)
+    {
+        rhs.map { lhs?.description.append(contentsOf: ":\($0)") }
+    }
+}
+
 @frozen public 
 enum Resource:Sendable 
 {
@@ -77,16 +115,7 @@ enum Resource:Sendable
             .init("\(major).\(minor).\(patch)")
         }
         
-        @inlinable public static 
-        func * (lhs:Self, rhs:Self) -> Self 
-        {
-            .init("\(lhs):\(rhs)")
-        }
-        @inlinable public static 
-        func *= (lhs:inout Self, rhs:Self)
-        {
-            lhs.description += ":\(rhs)"
-        }
+
         
         @inlinable public 
         init(_ description:String)
