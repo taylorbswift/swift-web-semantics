@@ -74,16 +74,34 @@ struct Bureaucrat:Sendable
     }
     
     public
-    func read(from path:FilePath, type:Resource.Text) async throws -> Resource
+    func read(concatenating head:FilePath, _ body:FilePath..., type:Resource.Text) async throws -> Resource
     {
-        guard path.isRelative 
+        guard head.isRelative 
         else 
         {
             fatalError("path is not relative")
         }
-        async let version:Resource.Version? = self.version(of: path)
-        let bytes:[UInt8]                   = try Self.read([UInt8].self, from: self.repository.appending(path.components))
-        return .utf8(encoded: bytes, type: type, version: try await version)
+        async let version:Resource.Version? = self.version(of: head)
+        var bytes:[UInt8]           = try Self.read([UInt8].self, from: self.repository.appending(head.components))
+        var hash:Resource.Version?  = try await version
+        
+        for next:FilePath in body 
+        {
+            guard next.isRelative 
+            else 
+            {
+                fatalError("path is not relative")
+            }
+            async let version:Resource.Version? = self.version(of: head)
+            bytes += try Self.read([UInt8].self, from: self.repository.appending(next.components))
+            hash  *= try await version
+        }
+        return .utf8(encoded: bytes, type: type, version: hash)
+    }
+    public
+    func read(from path:FilePath, type:Resource.Text) async throws -> Resource
+    {
+        try await self.read(concatenating: path, type: type)
     }
     public
     func read(from path:FilePath, type:Resource.Binary) async throws -> Resource
