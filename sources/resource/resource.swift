@@ -66,6 +66,19 @@ extension Optional where Wrapped == Resource.Version
 @frozen public 
 enum Resource:Sendable 
 {
+    public 
+    struct TypeError:Error 
+    {
+        let expected:Binary, 
+            encountered:Binary 
+        public 
+        init(_ encountered:Binary, expected:Binary)
+        {
+            self.expected = expected
+            self.encountered = encountered
+        }
+    }
+    
     @frozen public 
     struct Version:Hashable, CustomStringConvertible, Sendable  
     {
