@@ -191,6 +191,7 @@ enum Resource:Sendable
         case rss            = "application/rss+xml"
         case svg            = "image/svg+xml"
         
+        // does not include charset!
         @inlinable public 
         var description:String 
         {
@@ -247,10 +248,18 @@ enum Resource:Sendable
             case .icon:     return "image/x-icon"
             }
         }
+        // includes charset!
         @inlinable public 
         var description:String 
         {
-            self.rawValue 
+            if case .utf8(encoded: let type) = self 
+            {
+                return "\(type.description); charset=utf-8"
+            }
+            else
+            {
+                return self.rawValue 
+            }
         }
     }
 }
