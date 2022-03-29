@@ -59,7 +59,14 @@ extension Optional where Wrapped == Resource.Version
     @inlinable public static 
     func *= (lhs:inout Self, rhs:Self)
     {
-        rhs.map { lhs?.description.append(contentsOf: ":\($0)") }
+        if let rhs:Wrapped = rhs 
+        { 
+            lhs?.description.append(contentsOf: ":\(rhs)") 
+        }
+        else if case _? = lhs
+        {
+            lhs = nil 
+        }
     }
 }
 
