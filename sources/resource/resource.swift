@@ -135,7 +135,6 @@ enum Resource:Sendable
     }
     
     case text(String,    type:Text = .plain, version:Version? = nil)
-    case bytes([UInt8],  type:Text,          version:Version? = nil)
     case binary([UInt8], type:Binary,        version:Version? = nil) 
     
     @inlinable public
@@ -144,7 +143,6 @@ enum Resource:Sendable
         switch self
         {
         case    .text   (_, type: _, version: let version),
-                .bytes  (_, type: _, version: let version),
                 .binary (_, type: _, version: let version):
             return version
         }
@@ -181,18 +179,59 @@ enum Resource:Sendable
         }
     }
     @frozen public 
-    enum Binary:String, RawRepresentable, CustomStringConvertible, Sendable
+    enum Binary:RawRepresentable, CustomStringConvertible, Sendable
     {
-        case woff2  = "font/woff2"
-        case otf    = "font/otf"
-        case ttf    = "font/ttf"
-        case png    = "image/png"
-        case icon   = "image/x-icon"
+        case utf8(encoded:Text)
         
+        case woff2
+        case otf
+        case ttf
+        case png
+        case icon
+        
+        @inlinable public 
+        init?(rawValue:String)
+        {
+            switch rawValue 
+            {
+            case "font/woff2":
+                self = .woff2
+            case "font/otf":
+                self = .otf
+            case "font/ttf":
+                self = .ttf
+            case "image/png":
+                self = .png
+            case "image/x-icon":
+                self = .icon
+            case let other: 
+                if let text:Text = .init(rawValue: other)
+                {
+                    self = .utf8(encoded: text)
+                }
+                else 
+                {
+                    return nil
+                }
+            }
+        }
+        @inlinable public 
+        var rawValue:String 
+        {
+            switch self
+            {
+            case .utf8(encoded: let text): return text.description
+            case .woff2:    return "font/woff2"
+            case .otf:      return "font/otf"
+            case .ttf:      return "font/ttf"
+            case .png:      return "image/png"
+            case .icon:     return "image/x-icon"
+            }
+        }
         @inlinable public 
         var description:String 
         {
-            self.rawValue
+            self.rawValue 
         }
     }
 }
