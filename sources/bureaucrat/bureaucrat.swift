@@ -83,7 +83,7 @@ struct Bureaucrat:Sendable
         }
         async let version:Resource.Version? = self.version(of: path)
         let bytes:[UInt8]                   = try Self.read([UInt8].self, from: self.repository.appending(path.components))
-        return .binary(bytes, type: .utf8(encoded: type), version: try await version)
+        return .utf8(encoded: bytes, type: type, version: try await version)
     }
     public
     func read(from path:FilePath, type:Resource.Binary) async throws -> Resource

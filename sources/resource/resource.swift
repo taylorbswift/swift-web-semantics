@@ -137,6 +137,12 @@ enum Resource:Sendable
     case text(String,    type:Text = .plain, version:Version? = nil)
     case binary([UInt8], type:Binary,        version:Version? = nil) 
     
+    @inlinable public static
+    func utf8(encoded bytes:[UInt8], type:Text = .plain, version:Version? = nil) -> Self
+    {
+        .binary(bytes, type: .utf8(encoded: type), version: version)
+    }
+    
     @inlinable public
     var version:Version?
     {
