@@ -26,8 +26,9 @@ struct Bureaucrat:Sendable
     }
     
     private 
-    let git:FilePath, 
-        repository:FilePath
+    let git:FilePath
+    public
+    let repository:FilePath
     
     public
     init(git:FilePath = "/usr/bin/git", repository:FilePath)
