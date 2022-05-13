@@ -5,31 +5,29 @@ let package = Package(
     name: "swift-resource",
     products: 
     [
-        .library(name: "Resource",   targets: ["Resource"]),
-        .library(name: "Bureaucrat", targets: ["Bureaucrat"]),
+        .library(name: "Resource",          targets: ["Resource"]),
+        .library(name: "VersionControl",    targets: ["VersionControl"]),
     ],
     dependencies: 
     [
-        .package(url: "https://github.com/apple/swift-system.git",      from: "1.1.1"),
-        .package(url: "https://github.com/kareman/SwiftShell",          from: "5.1.0")
+        .package(url: "https://github.com/apple/swift-system.git", from: "1.1.1"),
+        .package(url: "https://github.com/kareman/SwiftShell.git", from: "5.1.0")
     ],
     targets: 
     [
-        .target(name: "Bureaucrat", 
+        .target(name: "VersionControl", 
             dependencies: 
             [
-                .product(name: "SwiftShell", package: "SwiftShell"),
                 .target(name: "Resource"),
+                .product(name: "SwiftShell", package: "SwiftShell"),
+                .product(name: "SystemPackage", package: "swift-system"),
             ],
-            path: "sources/bureaucrat", 
+            path: "sources/version-control", 
             exclude: 
             [
             ]),
         .target(name: "Resource", 
-            dependencies: 
-            [
-                .product(name: "SystemPackage", package: "swift-system"),
-            ],
+            dependencies: [],
             path: "sources/resource", 
             exclude: 
             [

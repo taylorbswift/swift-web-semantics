@@ -1,10 +1,8 @@
-import struct SystemPackage.FilePath
+@preconcurrency
+import SystemPackage
+import SwiftShell
 
-import func SwiftShell.runAsync 
-import class SwiftShell.RunOutput
-import class SwiftShell.AsyncCommand
-
-extension Bureaucrat
+extension VersionController
 {
     static 
     func run(_ command:FilePath, _ arguments:[String]) async throws -> String 

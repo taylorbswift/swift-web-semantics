@@ -25,53 +25,8 @@ enum DynamicResponse<Endpoint>:Sendable where Endpoint:Sendable
     case enqueue(to:Endpoint)
 }
 
-extension Resource.Version 
-{
-    @inlinable public static 
-    func * (lhs:Self, rhs:Self) -> Self 
-    {
-        .init("\(lhs):\(rhs)")
-    }
-    @inlinable public static 
-    func *= (lhs:inout Self, rhs:Self)
-    {
-        lhs.description.append(contentsOf: ":\(rhs)")
-    }
-    
-    @inlinable public static 
-    func * (lhs:Self?, rhs:Self) -> Self? 
-    {
-        lhs.map { $0 * rhs }
-    }
-    @inlinable public static 
-    func *= (lhs:inout Self?, rhs:Self)
-    {
-        lhs?.description.append(contentsOf: ":\(rhs)")
-    }
-}
-extension Optional where Wrapped == Resource.Version
-{
-    @inlinable public static 
-    func * (lhs:Self, rhs:Self) -> Self 
-    {
-        rhs.flatMap { (rhs:Wrapped) in lhs.map { $0 * rhs } }
-    }
-    @inlinable public static 
-    func *= (lhs:inout Self, rhs:Self)
-    {
-        if let rhs:Wrapped = rhs 
-        { 
-            lhs?.description.append(contentsOf: ":\(rhs)") 
-        }
-        else if case _? = lhs
-        {
-            lhs = nil 
-        }
-    }
-}
-
 @frozen public 
-enum Resource:Sendable 
+struct Resource:Sendable 
 {
     public 
     struct TypeError:Error 
@@ -85,105 +40,45 @@ enum Resource:Sendable
             self.encountered = encountered
         }
     }
-    
     @frozen public 
-    struct Version:Hashable, CustomStringConvertible, Sendable  
+    enum Payload:Sendable 
     {
-        /* @frozen public 
-        struct Semantic:Hashable, Comparable, CustomStringConvertible  
-        {
-            public 
-            var major:Int, 
-                minor:Int, 
-                patch:Int
-                
-            @inlinable public 
-            var description:String 
-            {
-                "\(self.major).\(self.minor).\(self.patch)"
-            }
-
-            @inlinable public 
-            init(_ major:Int, _ minor:Int, _ patch:Int)
-            {
-                self.major = major
-                self.minor = minor
-                self.patch = patch
-            }
-            
-            @inlinable public static 
-            func < (lhs:Self, rhs:Self) -> Bool 
-            {
-                (lhs.major, lhs.minor, lhs.patch) < (rhs.major, rhs.minor, rhs.patch)
-            }
-        }  */
-        
-        public
-        var description:String 
-        
-        @inlinable public
-        var etag:String 
-        {
-            """
-            "\(self.description)"
-            """
-        }
-        
-        @inlinable public static
-        func semantic(_ major:Int, _ minor:Int, _ patch:Int) -> Self 
-        {
-            .init("\(major).\(minor).\(patch)")
-        }
-        
-
-        
-        @inlinable public 
-        init(_ description:String)
-        {
-            self.description = description
-        }
-        @inlinable public 
-        init?(etag:String)
-        {
-            guard case ("\""?, "\""?) = (etag.first, etag.last)
-            else 
-            {
-                return nil 
-            }
-            self.description = .init(etag.dropFirst().dropLast())
-        }
+        case text   (String,  type:Text)
+        case binary ([UInt8], type:Binary) 
     }
     
-    case text(String,    type:Text = .plain, version:Version? = nil)
-    case binary([UInt8], type:Binary,        version:Version? = nil) 
+    public 
+    let payload:Payload 
+    public 
+    var tag:Tag?
     
     @inlinable public static
-    func utf8(encoded bytes:[UInt8], type:Text = .plain, version:Version? = nil) -> Self
+    func text(_ string:String, type:Text = .plain, tag:Tag? = nil) -> Self
     {
-        .binary(bytes, type: .utf8(encoded: type), version: version)
+        .init(.text(string, type: type), tag: tag)
     }
-    
-    @inlinable public
-    var version:Version?
+    @inlinable public static
+    func binary(_ bytes:[UInt8], type:Binary, tag:Tag? = nil) -> Self
     {
-        switch self
-        {
-        case    .text   (_, type: _, version: let version),
-                .binary (_, type: _, version: let version):
-            return version
-        }
+        .init(.binary(bytes, type: type), tag: tag)
     }
-    @inlinable public
-    func matches(version other:Version?) -> Bool 
+    @inlinable public static
+    func utf8(encoded bytes:[UInt8], type:Text = .plain, tag:Tag? = nil) -> Self
     {
-        if let other:Version = other, case other? = self.version
-        {
-            return true 
-        }
-        else 
-        {
-            return false 
-        }
+        .binary(bytes, type: .utf8(encoded: type), tag: tag)
+    }
+    @inlinable public 
+    init(_ payload:Payload, tag:Tag?) 
+    {
+        self.payload = payload 
+        self.tag = tag
+    }
+
+    @available(*, deprecated, message: "use the =~= operator on `Optional<Resource.Tag>` directly")
+    @inlinable public
+    func matches(tag other:Tag?) -> Bool 
+    {
+        self.tag =~= other
     }
     
     @frozen public 
