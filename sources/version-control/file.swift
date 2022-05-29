@@ -1,6 +1,7 @@
 public 
 enum FileError:Error, CustomStringConvertible 
 {
+    case isDirectory                       (path:FilePath)
     case system               (error:Error, path:FilePath)
     case incompleteRead (bytes:Int, of:Int, path:FilePath)
     case incompleteWrite(bytes:Int, of:Int, path:FilePath)
@@ -9,7 +10,8 @@ enum FileError:Error, CustomStringConvertible
     {
         switch self 
         {
-        case    .system(error: _,                 path: let path),
+        case    .isDirectory(                     path: let path),
+                .system(error: _,                 path: let path),
                 .incompleteRead (bytes: _, of: _, path: let path),
                 .incompleteWrite(bytes: _, of: _, path: let path):
             return path
@@ -21,6 +23,8 @@ enum FileError:Error, CustomStringConvertible
     {
         switch self 
         {
+        case .isDirectory                                          (path: let path):
+            return "file '\(path)' is a directory"
         case .system                    (error: let error,          path: let path):
             return "system error '\(error)' while reading file '\(path)'"
         case .incompleteRead (bytes: let read,    of: let expected, path: let path):
@@ -88,8 +92,18 @@ enum File
             let file:FileDescriptor = try .open(path, .readOnly)
             return try file.closeAfter 
             {
-                return try initializer(file, Int.init(try file.seek(offset: 0, from: .end)))
+                let count:Int64 = try file.seek(offset: 0, from: .end)
+                guard count < .max
+                else 
+                {
+                    throw FileError.isDirectory(path: path)
+                }
+                return try initializer(file, Int.init(count))
             }
+        }
+        catch let error as FileError 
+        {
+            throw error 
         }
         catch let error 
         {
@@ -100,25 +114,28 @@ enum File
     @inlinable public static 
     func write(_ buffer:UnsafeBufferPointer<UInt8>, to path:FilePath) throws 
     {
-        let count:Int 
         do 
         {
             let file:FileDescriptor = try .open(path, .writeOnly, 
                 options:        [.create, .truncate], 
                 permissions:    [.ownerReadWrite, .groupRead, .otherRead])
-            count = try file.closeAfter 
+            let count:Int = try file.closeAfter 
             {
                 try file.write(UnsafeRawBufferPointer.init(buffer))
             }
+            guard count == buffer.count
+            else
+            {
+                throw FileError.incompleteWrite(bytes: count, of: buffer.count, path: path)
+            }
+        }
+        catch let error as FileError 
+        {
+            throw error 
         }
         catch let error 
         {
             throw FileError.system(error: error, path: path)
-        }
-        guard count == buffer.count
-        else
-        {
-            throw FileError.incompleteWrite(bytes: count, of: buffer.count, path: path)
         }
     }
     @inlinable public static 
