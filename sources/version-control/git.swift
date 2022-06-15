@@ -37,8 +37,8 @@ struct VersionController:Sendable
             fatalError("path is not relative")
         }
         async let tag:Resource.Tag? = self.revision(of: head)
-        var bytes:[UInt8]           = try File.read([UInt8].self, from: self.repository.appending(head.components))
-        var hash:Resource.Tag?  = try await tag
+        var bytes:[UInt8] = try File.read([UInt8].self, from: self.repository.appending(head.components))
+        var hash:Resource.Tag? = try await tag
         
         for next:FilePath in body 
         {
@@ -47,10 +47,11 @@ struct VersionController:Sendable
             {
                 fatalError("path is not relative")
             }
-            async let tag:Resource.Tag? = self.revision(of: head)
+            async let tag:Resource.Tag? = self.revision(of: next)
             bytes += try File.read([UInt8].self, from: self.repository.appending(next.components))
             hash  *= try await tag
         }
+                
         return .utf8(encoded: bytes, type: type, tag: hash)
     }
     public
@@ -70,7 +71,6 @@ struct VersionController:Sendable
         let bytes:[UInt8]                   = try File.read([UInt8].self, from: self.repository.appending(path.components))
         return .binary(bytes, type: type, tag: try await tag)
     }
-
 
     private 
     func modified(_ path:FilePath) async throws -> Bool
@@ -101,7 +101,7 @@ struct VersionController:Sendable
     public 
     func revision(of path:FilePath) async throws -> Resource.Tag?
     {
-        async let commit:String = self.lastCommit(path)
+        async let commit:String = self.lastCommit(path)        
         if try await self.modified(path)
         {
             return nil
