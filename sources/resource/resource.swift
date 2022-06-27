@@ -13,10 +13,11 @@ protocol ServiceBackend
 enum StaticResponse:Sendable 
 {
     case none(Resource)
-    
-    case maybe(canonical:String, at:String)
-    case found(canonical:String, at:String)
-    case matched(canonical:String, Resource)
+    case error(Resource)
+    case multiple(Resource)
+    case matched(Resource, canonical:String)
+    case found(at:String, canonical:String)
+    case maybe(at:String, canonical:String)
 }
 @frozen public 
 enum DynamicResponse<Endpoint>:Sendable where Endpoint:Sendable
