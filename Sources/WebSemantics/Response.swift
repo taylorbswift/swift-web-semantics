@@ -1,3 +1,16 @@
+#if swift(>=5.5)
+extension Canonicity:Sendable where Location:Sendable {}
+extension Redirection:Sendable where Payload:Sendable {}
+extension Response:Sendable where Payload:Sendable {}
+#endif 
+
+extension Canonicity:Equatable where Location:Equatable {}
+extension Canonicity:Hashable where Location:Hashable {}
+extension Redirection:Equatable where Payload:Equatable {}
+extension Redirection:Hashable where Payload:Hashable {}
+extension Response:Equatable where Payload:Equatable {}
+extension Response:Hashable where Payload:Hashable {}
+
 @frozen public 
 enum Canonicity<Location>
 {
