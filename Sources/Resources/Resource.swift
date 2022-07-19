@@ -1,18 +1,7 @@
 @_exported import MIME
 @_exported import SHA2
 
-@available(*, deprecated)
-public 
-protocol ServiceBackend 
-{
-    associatedtype Request
-    associatedtype Endpoint
-    associatedtype Continuation where Continuation:Sendable
-    
-    func request(_ request:Request) -> DynamicResponse<Endpoint>
-    func request(_ endpoint:Endpoint, continuation:Continuation) 
-}
-
+@available(*, unavailable)
 @frozen public 
 enum StaticResponse:Sendable 
 {
@@ -22,13 +11,6 @@ enum StaticResponse:Sendable
     case matched(Resource, canonical:String)
     case found(at:String, canonical:String)
     case maybe(at:String, canonical:String)
-}
-@available(*, deprecated)
-@frozen public 
-enum DynamicResponse<Endpoint>:Sendable where Endpoint:Sendable
-{
-    case immediate(StaticResponse)
-    case enqueue(to:Endpoint)
 }
 
 @frozen public 
