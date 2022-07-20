@@ -5,7 +5,7 @@ extension MIME.TypeError:Sendable {}
 #endif 
 
 @frozen public 
-enum MIME:RawRepresentable, CustomStringConvertible
+enum MIME:Hashable, RawRepresentable, CustomStringConvertible
 {
     public 
     struct TypeError:Error 
@@ -21,7 +21,7 @@ enum MIME:RawRepresentable, CustomStringConvertible
     }
     
     @frozen public 
-    enum Text:String, RawRepresentable, CustomStringConvertible
+    enum Text:String, Hashable, RawRepresentable, CustomStringConvertible
     {
         case plain          = "text/plain"
         case markdown       = "text/markdown"
@@ -80,7 +80,7 @@ enum MIME:RawRepresentable, CustomStringConvertible
         case "image/x-icon":
             self = .icon
         case let other: 
-            if let text:Text = .init(rawValue: other)
+            if let text:Text = Text.init(rawValue: other)
             {
                 self = .utf8(encoded: text)
             }

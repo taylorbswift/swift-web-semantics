@@ -1,6 +1,6 @@
 <div align="center">
   
-***`resource`***<br>`0.2.3`
+***`resource`***<br>`0.3.2`
   
 [![ci status](https://github.com/kelvin13/swift-resource/actions/workflows/build.yml/badge.svg)](https://github.com/kelvin13/swift-hash/actions/workflows/build.yml)
 [![ci status](https://github.com/kelvin13/swift-resource/actions/workflows/build-devices.yml/badge.svg)](https://github.com/kelvin13/swift-hash/actions/workflows/build-devices.yml)
@@ -22,7 +22,7 @@ Downstream consumers of this package are expected to provide additional function
 
 *   `Resources`
 
-    Vends a single type `Resource`, which wraps a `MIME` type and a backing storage payload ([`String`](https://swiftinit.org/reference/swift/string) or [`[UInt8]`](https://swiftinit.org/reference/swift/array))
+    Vends a single type `Resource`, which wraps a `MIME` type, a backing storage payload ([`String`](https://swiftinit.org/reference/swift/string) or [`[UInt8]`](https://swiftinit.org/reference/swift/array)), and an optional SHA-256 hash. The `Resources` module also provides convenience APIs for serializing and parsing a SHA-256 hash to and from an HTTP ETag string.
 
     Please note that the module is named *`Resources`*, but the type is named `Resource`.
 

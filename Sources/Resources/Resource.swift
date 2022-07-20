@@ -1,23 +1,16 @@
 @_exported import MIME
 @_exported import SHA2
 
-@available(*, unavailable)
-@frozen public 
-enum StaticResponse:Sendable 
-{
-    case none(Resource)
-    case error(Resource)
-    case multiple(Resource)
-    case matched(Resource, canonical:String)
-    case found(at:String, canonical:String)
-    case maybe(at:String, canonical:String)
-}
+#if swift(>=5.5)
+extension Resource:Sendable {}
+extension Resource.Payload:Sendable {}
+#endif 
 
 @frozen public 
-struct Resource:Sendable 
+struct Resource:Equatable 
 {
     @frozen public 
-    enum Payload:Sendable 
+    enum Payload:Equatable
     {
         case text(String, type:MIME.Text)
         case bytes([UInt8], type:MIME) 
@@ -27,38 +20,6 @@ struct Resource:Sendable
     let payload:Payload 
     public 
     let hash:SHA256?
-    
-    @available(*, deprecated, renamed: "hash")
-    public 
-    var tag:SHA256?
-    {
-        self.hash
-    }
-    
-    @available(*, deprecated, renamed: "init(_:type:hash:)")
-    @inlinable public static
-    func text(_ string:String, type:MIME.Text = .plain, tag:SHA256? = nil) -> Self
-    {
-        .init(string, type: type, hash: tag)
-    }
-    @available(*, deprecated, renamed: "init(_:type:hash:)")
-    @inlinable public static
-    func bytes(_ bytes:[UInt8], type:MIME, tag:SHA256? = nil) -> Self
-    {
-        .init(bytes, type: type, hash: tag)
-    }
-    @available(*, deprecated, renamed: "init(_:type:hash:)")
-    @inlinable public static
-    func utf8(encoded bytes:[UInt8], type:MIME.Text = .plain, tag:SHA256? = nil) -> Self
-    {
-        .init(bytes, type: .utf8(encoded: type), hash: tag)
-    }
-    @available(*, deprecated, renamed: "init(_:hash:)")
-    @inlinable public 
-    init(_ payload:Payload, tag:SHA256?) 
-    {
-        self.init(payload, hash: tag)
-    }
     
     @inlinable public 
     init(hashing string:String, type:MIME.Text = .plain) 
@@ -87,11 +48,4 @@ struct Resource:Sendable
         self.payload = payload 
         self.hash = hash
     }
-
-    @available(*, deprecated, renamed: "MIME.Text")
-    public 
-    typealias Text = MIME.Text
-    @available(*, deprecated, renamed: "MIME")
-    public 
-    typealias Binary = MIME
 }
