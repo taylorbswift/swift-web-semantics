@@ -19,5 +19,5 @@ jobs:
                 run: |
                     swift --version
                     xcrun xcodebuild build -scheme "MIME" -destination "generic/platform=${{ matrix.device }}"
-                    xcrun xcodebuild build -scheme "Resources" -destination "generic/platform=${{ matrix.device }}"
+                    xcrun xcodebuild build -scheme "WebResponse" -destination "generic/platform=${{ matrix.device }}"
                     xcrun xcodebuild build -scheme "WebSemantics" -destination "generic/platform=${{ matrix.device }}"
