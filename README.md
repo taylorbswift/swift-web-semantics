@@ -1,6 +1,6 @@
 <div align="center">
   
-***`resource`***<br>`0.4.0`
+***`web-semantics`***<br>`0.4.0`
   
 [![ci status](https://github.com/kelvin13/swift-resource/actions/workflows/build.yml/badge.svg)](https://github.com/kelvin13/swift-resource/actions/workflows/build.yml)
 [![ci status](https://github.com/kelvin13/swift-resource/actions/workflows/build-devices.yml/badge.svg)](https://github.com/kelvin13/swift-resource/actions/workflows/build-devices.yml)
