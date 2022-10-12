@@ -2,11 +2,11 @@
 import PackageDescription
 
 let package:Package = .init(
-    name: "swift-resource",
+    name: "swift-web-semantics",
     products: 
     [
         .library(name: "MIME",          targets: ["MIME"]),
-        .library(name: "Resources",     targets: ["Resources"]),
+        .library(name: "WebResponse",   targets: ["WebResponse"]),
         .library(name: "WebSemantics",  targets: ["WebSemantics"]),
     ],
     dependencies: 
@@ -16,12 +16,16 @@ let package:Package = .init(
     targets: 
     [
         .target(name: "MIME"),
-        .target(name: "Resources", 
+        .target(name: "WebResponse", 
             dependencies: 
             [
                 .target(name: "MIME"),
                 .product(name: "SHA2", package: "swift-hash"),
             ]),
-        .target(name: "WebSemantics"),
+        .target(name: "WebSemantics", 
+            dependencies: 
+            [
+                .target(name: "WebResponse"),
+            ]),
     ]
 )
