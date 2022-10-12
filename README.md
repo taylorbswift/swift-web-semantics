@@ -1,6 +1,6 @@
 <div align="center">
   
-***`resource`***<br>`0.3.2`
+***`resource`***<br>`0.4.0`
   
 [![ci status](https://github.com/kelvin13/swift-resource/actions/workflows/build.yml/badge.svg)](https://github.com/kelvin13/swift-resource/actions/workflows/build.yml)
 [![ci status](https://github.com/kelvin13/swift-resource/actions/workflows/build-devices.yml/badge.svg)](https://github.com/kelvin13/swift-resource/actions/workflows/build-devices.yml)
@@ -20,12 +20,10 @@ Downstream consumers of this package are expected to provide additional function
 
     Vends a single type `MIME`, which contains `content-type` definitions.
 
-*   `Resources`
+*   `WebResponse`
 
-    Vends a single type `Resource`, which wraps a `MIME` type, a backing storage payload ([`String`](https://swiftinit.org/reference/swift/string) or [`[UInt8]`](https://swiftinit.org/reference/swift/array)), and an optional SHA-256 hash. The `Resources` module also provides convenience APIs for serializing and parsing a SHA-256 hash to and from an HTTP ETag string.
-
-    Please note that the module is named *`Resources`*, but the type is named `Resource`.
+    Vends a single type `WebResponse`, which models an abstract HTTP response, and wraps a content payload ([`String`](https://swiftinit.org/reference/swift/string) or [`[UInt8]`](https://swiftinit.org/reference/swift/array)), its canonical location(s), and an optional SHA-256 hash. The `WebResponse` module also provides convenience APIs for serializing and parsing a SHA-256 hash to and from an HTTP ETag string.
 
 *   `WebSemantics`
 
-    Contains type definitions useful for applications that implement an HTTP or HTTP-like API, without needing to know the details of HTTP specifically.
+    Vends the `WebService` protocol, which is useful for applications that implement an HTTP or HTTP-like API, without needing to know the details of HTTP specifically. Requires Swift >= 5.5.
