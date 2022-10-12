@@ -1,6 +1,7 @@
 @_exported import WebResponse
 
 #if swift(>=5.7)
+@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 public
 protocol WebService<Request>:Sendable
 {
@@ -9,6 +10,7 @@ protocol WebService<Request>:Sendable
     func serve(_ request:Request) async throws -> WebResponse
 }
 #elseif swift(>=5.5)
+@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 public
 protocol WebService:Sendable
 {
